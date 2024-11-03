@@ -1,8 +1,6 @@
 import requests
 from flask import Flask, jsonify
-
-
-app = Flask(__name__)
+from config import app
 
 # Mpesa API credentials
 CONSUMER_KEY = 'your_consumer_key'

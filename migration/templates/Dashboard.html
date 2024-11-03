@@ -118,17 +118,18 @@
                  </span>
         <div class="profilebox">
             <div class="profileimg">
-                <img src="./siteimage/crown.jpg" alt="">
-                <span>@CEO.</span>
-            </div>
+                <img src="{{ user_details.profile_pic }}" alt="User Profile Picture">
+                <span>@{{ user_details.username }}</span>
+            </div>            
             <div class="profilecontent">
-                <span>Service : <i style="color: #24db14;">Grand Membership</i></span>
-                <span>Status : <i style="color: #24db14;">Active</i></span>
-                <span>Username : <i>CEO</i></span>
-                <span>Email : <i>marionkuria3@gmail.com</i></span>
-                <span>Phone : <i>0112121731</i></span>
-                <span>Upline : <i>CEO</i></span>
+                <span>Service : <i style="color: #24db14;">{{ user_details.service }}</i></span>
+                <span>Status : <i style="color: #24db14;">{{ user_details.status }}</i></span>
+                <span>Username : <i>{{ user_details.username }}</i></span>
+                <span>Email : <i>{{ user_details.email }}</i></span>
+                <span>Phone : <i>{{ user_details.phone }}</i></span>
+                <span>Upline : <i>{{ user_details.upline }}</i></span>
             </div>
+            
         </div>
     </div>
 
@@ -142,7 +143,7 @@
                  </span>
 
             <div class="crowndiv">
-                <img src="./siteimage/crown.jpg" alt="" srcset="">
+                <img src="{{ user_details.profile_pic }}" alt="User Profile Picture">
                 <span>CROWN-WAVE</span>
             </div>
             <div class="menus">
@@ -173,29 +174,13 @@
                 <a href="./claim"><span class="material-symbols-outlined">
                 group_add
                 </span>Agent Claim</a>
-                <!-- <a href="./spin" class=""><i class="fa-solid fa-spinner"></i>Spinning</a>
-               <a href="./forex" class=""><i class="fa-solid fa-arrow-up-wide-short"></i></i>Forex-Bot</a> -->
                 <a href="./package" class=""><span class="material-symbols-outlined">
                  whatshot
                  </span>Service package</a>
                 <a href="./token" class=""><span class="material-symbols-outlined">
                  card_membership
                  </span>Account Token</a>
-                <!-- <a href="./task" class=""><span class="material-symbols-outlined">
-                 sticky_note_2
-                 </span>Academic Tasks</a>
-               <a href="./writting" class="activebar"><span class="material-symbols-outlined">
-                 library_books
-                 </span>Academic Writting</a>
-               <a href="./meals" class="activebar"><span class="material-symbols-outlined">
-                 fastfood
-                 </span>Meals</a>
-               <a href="./gadget" class="activebar"><span class="material-symbols-outlined">
-                 editor_choice
-                 </span>Accessories</a>
-               <a href="./cart" class="activebar"><span class="material-symbols-outlined">
-                 shopping_cart_checkout
-                 </span>Cart</a> -->
+                
                 <a href="./contact"><span class="material-symbols-outlined">
                  contact_mail
                  </span>Contact</a>
@@ -206,12 +191,12 @@ directions_run
             </div>
         </div>
         <div class="header">
-            <img src="./siteimage/crown.jpg" alt="" srcset="" class="">
+            <img src="{{ user_details.profile_pic }}" alt="User Profile Picture">
             <input type="text" name="find" placeholder="Search . . .">
             <div class="mypackage">
                 <span class=" material-symbols-outlined">
                  workspace_premium
-                 </span> Grand Membership </div>
+                 </span>{{user_details.membership}} Member </div>
             <div class="topbars">
                 <span class="pshow material-symbols-outlined" onclick="opennav()">
                 widgets
@@ -225,38 +210,17 @@ directions_run
                 <span onclick="openuser()" class="material-symbols-outlined" style="content: '44';">
                      manage_accounts
                      </span>
-                <img src="./siteimage/boss.png" alt="" srcset="">
+                     <img src="{{ user_details.profile_pic }}" alt="User Profile Picture">
             </div>
         </div>
 
 
-        <script>
-            // fetch("https://ipapi.co/json/")
-            // .then( res => res.json())
-            // .then(data => {
-            //   let ipapiCountry = data.country_name
-            //   let ipapiCurrency = data.currency
-            //   console.log(ipapiCurrency)
-            //   fetch("./request.php",{
-            //   method: "POST",
-            //   headers: {
-            //     "Conntent-Type": "Apllication/json"
-            //   },
-            //   body: JSON.stringify({
-            //       "country": ipapiCountry,
-            //       "currency":ipapiCurrency
-            //   })
-            // })
-            // .then(res => res.json())
-            // .then(data => console.log(data));
-            // })
-        </script>
 
         <div class="maincontent">
             <div class="welcome">
                 <div class="inwelcome">
                     <span>Good morning,                           </span>
-                    <i>CEO 👋</i>
+                    <i>{{user_details.username}} 👋</i>
                 </div>
                 <div class="priceinf dshow">
                     <span class="headinf">   Tuesday's Give away Cashback🎄.</span>
@@ -318,8 +282,8 @@ directions_run
 
                         <form action="./package">
                             <button class="goodbtn"><span class="material-symbols-outlined">
-                                                        editor_choice
-                                                        </span>Upgrade Now!</button>
+                                    editor_choice
+                              </span>Upgrade Now!</button>
                         </form>
 
                         <div class="inpackage">
@@ -638,16 +602,39 @@ directions_run
 
             </div>
             <div class="link">
-                <div class="titles"><span class="material-symbols-outlined">
-                                  family_link
-                                  </span>My Link</div>
+                <div class="titles">
+                    <span class="material-symbols-outlined">family_link</span> My Link
+                </div>
                 <div class="divlink">
-                    <input type="text" value="https://crownwave.org/CEO" id="links">
-                    <button onclick="mylink()"> <span class="material-symbols-outlined">
-                                      content_copy
-                                      </span onclick="mylink()">Copy Link</button>
+                    <!-- Display the referral link -->
+                    <input type="text" value="{{ referral_link }}" id="links" readonly>
+                    <button onclick="copyLink()"> 
+                        <span class="material-symbols-outlined">content_copy</span> Copy Link
+                    </button>
+                </div>
+                
+                <!-- Display referral count -->
+                <div class="referral-count">
+                    <p>You have referred <strong>{{ referrals }}</strong> users!</p>
                 </div>
             </div>
+            
+            <script>
+                // Function to copy referral link to clipboard
+                function copyLink() {
+                    const linkInput = document.getElementById("links");
+                    linkInput.select();
+                    linkInput.setSelectionRange(0, 99999); // For mobile devices
+                    navigator.clipboard.writeText(linkInput.value)
+                        .then(() => {
+                            alert("Referral link copied to clipboard!");
+                        })
+                        .catch((error) => {
+                            console.error("Error copying link: ", error);
+                        });
+                }
+            </script>
+            
         </div>
     </div>
     <script>

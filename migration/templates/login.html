@@ -84,13 +84,14 @@
     <div class="mainlayout">
         <div class="divcontent">
             <div class="divlogo">
-                <img src="./siteimage/crown.jpg" alt=""> CROWN WAVE ADVERTS </div>
-            <form action="./connection.php" method="POST">
+            <img src="./siteimage/crown.jpg" alt=""> CROWN WAVE ADVERTS </div>
+            <form action= "{{url_for('login')}}" method="POST">
+                {% if error %}<p style ="color:red;">{{error}}</p>{% endif%}
 
                 <div class="logindiv" id="login">
 
-                    <input type="text" name="name" id="mylogin" placeholder="Your Username ">
-                    <input type="password" name="pass" placeholder="Your Password ">
+                    <input type="text" name="username" id="mylogin" placeholder="Your Username ">
+                    <input type="password" name="password" id="mypassword" placeholder="Your Password ">
 
                     <button class="goodbtn" name="login">login-Now 
                 <span class="material-symbols-outlined">
@@ -100,7 +101,7 @@
                 </div>
                 <div class="logindiv" id="recover" style=" display: none;">
 
-                    <input type="text" name="email" id="mylogin" placeholder="Registered Email">
+                    <input type="text" name="email" id="myemail" placeholder="Registered Email">
 
                     <button class="goodbtn" type="submit" name="recoveraccount">Recover Now  <span class="material-symbols-outlined">passkey</span>
            </button>
@@ -108,7 +109,7 @@
                 <div class="extra">
                     <a href="#" onclick="pssfunc(2)" style="display: none;" id="btnlogin">Login <span class="material-symbols-outlined"> directions_run  </span></a>
 
-                    <a href="#" onclick="pssfunc(1)" id="btnrecover">Forgot Password <span class="material-symbols-outlined">passkey</span></a>
+                    <a href="{{url_for('forgot_password')}}" onclick="pssfunc(1)" id="btnrecover">Forgot Password <span class="material-symbols-outlined">passkey</span></a>
 
                     <a href="./signup">Create Account <span class="material-symbols-outlined">
 east

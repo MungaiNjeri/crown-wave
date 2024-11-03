@@ -84,17 +84,29 @@
             <div class="divcontent">
                 <div class="divlogo">
                     <img src="./siteimage/crown.jpg" alt=""> CROWN WAVE ADVERTS </div>
-                <form action="{{url_for(register)}}" method="post">
+                <form action="{{url_for('signup')}}" method="post">
                     <div class="logindiv">
-                    {% if error %}<p style ="color:red;">{{error}}</p>{% endif%}
-                        <input type="text" name="name" placeholder="Username" required>
+                        {% if error %}<p style="color:red;">{{ error }}</p>{% endif %}
+                        
+                        <input type="text" name="username" placeholder="Username" required>
                         <input type="text" name="phone" placeholder="Phone" required>
                         <input type="email" name="email" placeholder="Email" required>
-                        <input type="password" name="pass" placeholder="Your-Password" required>
+                        <input type="password" name="password" placeholder="Your-Password" required>
                         <input type="text" name="boss" value="None" hidden>
-                        <button class="goodbtn" name="reg">Create Account  <span class="material-symbols-outlined"> person_add  </span>  </button>
+                        
+                        <!-- Membership Level Dropdown -->
+                        <label for="membership_level">Membership Level:</label>
+                        <select name="membership_level" id="membership_level" required>
+                            <option value="basic" selected>Basic</option>
+                            <option value="platinum">Platinum</option>
+                            <option value="gold">Gold</option>
+                        </select>
+                    
+                        <button class="goodbtn" name="reg">Create Account  
+                            <span class="material-symbols-outlined">person_add</span>
+                        </button>
                     </div>
-                    <div class="etra">
+                    
 
                         <a href="./login">Login Now <span class="material-symbols-outlined"> passkey</span></a>
                     
