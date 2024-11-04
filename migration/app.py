@@ -1,10 +1,10 @@
 from flask import Flask, jsonify
 from flask import Blueprint
-from models import  User, Transaction, Package
-from mpesa import lipa_na_mpesa_online
+# from models import  User, Transaction, Package
+# from mpesa import lipa_na_mpesa_online
 from flask import request
-from config import app,db
-from route import route_app
+from migration.config import app,db
+from migration.route import route_app
 
 
 

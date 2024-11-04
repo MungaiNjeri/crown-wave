@@ -2,7 +2,7 @@
 from datetime import datetime
 from sqlalchemy import create_engine, Column, Integer, String, MetaData
 from sqlalchemy.ext.declarative import declarative_base
-from config import db
+from migration.config import db
 from flask_login import UserMixin
 import enum
 

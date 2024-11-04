@@ -1,7 +1,7 @@
 import requests
 import base64
 from datetime import datetime
-from authenticate import authenticate  # Ensure this is correct
+from migration.authenticate import authenticate  # Ensure this is correct
 
 def lipa_na_mpesa_online(phone_number, amount):
     access_token = authenticate()
