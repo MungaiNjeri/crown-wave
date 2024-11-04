@@ -1,10 +1,10 @@
 import uuid
 from flask import Flask, request, jsonify, render_template, redirect, url_for,Blueprint, flash
-from .models import  Link, User, Transaction, Package, AccountBalance
+from migration.models import User, Transaction, Package
 from flask_scrypt import generate_password_hash, check_password_hash
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
-from .mpesa import lipa_na_mpesa_online  # Ensure this import is present
+from migration.mpesa import lipa_na_mpesa_online  # Ensure this import is present
 from config import app,db, login_manager, mail
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer
