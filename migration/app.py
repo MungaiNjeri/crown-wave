@@ -1,13 +1,11 @@
 from flask import Flask, jsonify
 from flask import Blueprint
+
 # from models import  User, Transaction, Package
 # from mpesa import lipa_na_mpesa_online
 from flask import request
-from migration.config import app,db
+from migration.config import app, db
 from migration.route import route_app
-
-
-
 
 
 # Register routes
@@ -25,7 +23,7 @@ def mpesa_payment():
     except Exception as e:
         return jsonify({"error": str(e)}), 500 """
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with app.app_context():
         db.create_all()  # Create the database tables
     app.run(debug=True)
