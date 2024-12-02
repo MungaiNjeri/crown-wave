@@ -147,43 +147,56 @@
                 <span>CROWN-WAVE</span>
             </div>
             <div class="menus">
-                <a href="./account" class=""> <span class="material-symbols-outlined">
-                 empty_dashboard
-                 </span>Dashboard</a>
-                <a href="./capital"><span class="material-symbols-outlined">
-                 monitoring
-                 </span>Capital</a>
-                <a href="./records"><span class="material-symbols-outlined">
-                 receipt_long
-                 </span>
-                 transactions</a>
-                <a href="./recharge"><span class="material-symbols-outlined">
-                 credit_score
-                 </span>Recharge</a>
-                <a href="./transfer"><span class="material-symbols-outlined">
-                send_money
-                </span>
-                Transfer </a>
-                <a href="./withdrawal"><span class="material-symbols-outlined">
-                 currency_exchange
-                 </span>Withdrawal</a>
-                <a href="./whatsapp"><i class="fa-brands fa-whatsapp"></i>Whatsapp</a>
-                <a href="./team"><span class="material-symbols-outlined">
-               groups
-               </span>My Team</a>
-                <a href="./claim"><span class="material-symbols-outlined">
-                group_add
-                </span>Agent Claim</a>
-                <a href="./package" class=""><span class="material-symbols-outlined">
-                 whatshot
-                 </span>Service package</a>
-                <a href="./token" class=""><span class="material-symbols-outlined">
-                 card_membership
-                 </span>Account Token</a>
-                
-                <a href="./contact"><span class="material-symbols-outlined">
-                 contact_mail
-                 </span>Contact</a>
+                <a href="{{ url_for('dashboard') }}">
+                    <span class="material-symbols-outlined">empty_dashboard</span>
+                    Dashboard
+                </a>
+                <a href="{{ url_for('capital') }}">
+                    <span class="material-symbols-outlined">monitoring</span>
+                    Capital
+                </a>
+                <a href="{{ url_for('records') }}">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                    Transactions
+                </a>
+                <a href="{{ url_for('recharge') }}">
+                    <span class="material-symbols-outlined">credit_score</span>
+                    Recharge
+                </a>
+                <a href="{{ url_for('transfer') }}">
+                    <span class="material-symbols-outlined">send_money</span>
+                    Transfer
+                </a>
+                <a href="{{ url_for('withdrawal') }}">
+                    <span class="material-symbols-outlined">currency_exchange</span>
+                    Withdrawal
+                </a>
+                <a href="{{ url_for('whatsapp') }}">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    Whatsapp
+                </a>
+                <a href="{{ url_for('team') }}">
+                    <span class="material-symbols-outlined">groups</span>
+                    My Team
+                </a>
+                <a href="{{ url_for('claim') }}">
+                    <span class="material-symbols-outlined">group_add</span>
+                    Agent Claim
+                </a>
+                <a href="{{ url_for('package') }}">
+                    <span class="material-symbols-outlined">whatshot</span>
+                    Service Package
+                </a>
+                <a href="{{ url_for('token') }}">
+                    <span class="material-symbols-outlined">card_membership</span>
+                    Account Token
+                </a>
+                <a href="{{ url_for('contact') }}">
+                    <span class="material-symbols-outlined">contact_mail</span>
+                    Contact
+                </a>
+            </div>
+            
                 <a href="{{url_for('logout')}}"><span class="material-symbols-outlined">
 directions_run
 </span>
@@ -247,7 +260,7 @@ directions_run
                     <div class="mydata">
                         <div class="indata">
                             <span class="dataname">
-                                Whatsapp Balance
+                                Whatsapp Balance:{{whatsapp_balance}}
                               </span>
                             <i class="fa-brands fa-whatsapp"></i>
                             <span class="dataamount">
@@ -262,7 +275,7 @@ directions_run
                     <div class="mydata">
                         <div class="indata">
                             <span class="dataname">
-                                Total Whatsapp Withdrawal
+                                Total Whatsapp Withdrawal:{{totalwhatsapp_withdrawal}}
                               </span>
                             <span class="material-symbols-outlined">
                                 payments
@@ -295,7 +308,7 @@ directions_run
                     <div class="mydata">
                         <div class="indata">
                             <span class="dataname">
-                                Cashback Balance
+                                Cashback Balance:{{cashback_balance}}
                               </span>
                             <form class="" action="./request.php" method="POST"><button class="goodbtn" name="redeem"><span class="material-symbols-outlined">
                                 credit_card_heart

@@ -211,6 +211,7 @@ def reset_password(token):
 
 
 @app.route("/dashboard")
+@app.route("/account")
 @login_required
 def dashboard():
     # Fetch user balance and other details
@@ -228,6 +229,9 @@ def dashboard():
         "profile_pic": current_user.profile_pic,
         "membership": current_user.membership_level,
     }
+    whatsapp_balance = current_user.account_balance.whatsapp_balance if current_user.account_balance else 0
+    cashback_balance = current_user.account_balance.cashback_balance if current_user.account_balance else 0
+    totalwhatsapp_withdrawal = getattr(current_user, 'totalwhatsapp_withdrawal', 0) or 0
 
     # Generate or retrieve referral link
     referral_link = Link.query.filter_by(user_id=current_user.id).first()
@@ -245,27 +249,80 @@ def dashboard():
     return render_template(
         "Dashboard.html",
         balance=balance,
+        whatsapp_balance=whatsapp_balance,
+        cashback_balance=cashback_balance,
+        totalwhatsapp_withdrawal=totalwhatsapp_withdrawal,
         transactions=transactions,
         user_details=user_details,
         referral_link=referral_link.link_url,
         referrals=referrals,
     )
-
-
-@app.route("/transactions", methods=["GET", "POST"])
-@jwt_required()
-def create_transaction():
+@app.route("/capital",methods=["POST"])
+@login_required
+def add_capital():
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
+    if request.method == "POST":
+        amount = float(request.form.get("amount"))
+        user.balance += amount
+        db.session.commit()
+        return redirect(url_for("get_balance"))
+    return render_template("capital.html", balance=user.balance)
+
+@app.route("/withdraw",methods=["POST"])
+@login_required
+def withdraw_capital():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if request.method == "POST":
+        amount = float(request.form.get("amount"))
+        if user.balance < amount:
+            return render_template(
+                "withdraw.html", error="Insufficient balance", balance=user.balance
+            )
+        user.balance -= amount
+        db.session.commit()
+        return redirect(url_for("get_balance"))
+    return render_template("withdraw.html", balance=user.balance)
+@login_required
+@app.route("/transfer", methods=["GET", "POST"])
+def transfer_capital():
+    user = current_user
+    if request.method == "POST":
+        data = request.form
+        recipient_phone = data["recipient_phone"]
+        amount = float(data["amount"])
+        
+        if user.balance < amount:
+            return render_template("transfer.html", error="Insufficient balance", balance=user.balance)
+        
+        recipient = User.query.filter_by(phone=recipient_phone).first()
+        if recipient:
+            new_transaction = Transaction(
+                user_id=user.id, amount=amount, recipient=recipient_phone
+            )
+            user.balance -= amount
+            recipient.balance += amount
+            db.session.add(new_transaction)
+            db.session.commit()
+            return redirect(url_for("get_balance"))
+        else:
+            return render_template("transfer.html", error="User not found", balance=user.balance)
+    
+    return render_template("transfer.html", balance=user.balance)
+
+@login_required
+@app.route("/transactions", methods=["GET", "POST"])
+def create_transaction():
+    user = current_user
 
     if request.method == "POST":
         data = request.form
         amount = float(data["amount"])
+        
         if user.balance < amount:
-            return render_template(
-                "transactions.html", error="Insufficient balance", balance=user.balance
-            )
-
+            return render_template("transactions.html", error="Insufficient balance", balance=user.balance)
+        
         new_transaction = Transaction(
             user_id=user.id, amount=amount, recipient=data["recipient"]
         )
@@ -275,15 +332,66 @@ def create_transaction():
         return redirect(url_for("get_balance"))
 
     return render_template("transactions.html", balance=user.balance)
+@app.route("/capital")
+@login_required
+def capital():
+    return render_template("capital.html")
 
+@app.route("/records")
+@login_required
+def records():
+    return render_template("records.html")
 
+@app.route("/recharge")
+@login_required
+def recharge():
+    return render_template("recharge.html")
+@app.route("/whatsapp")
+@login_required
+def whatsapp():
+    return render_template("whatsapp.html")
+
+@app.route("/team")
+@login_required
+def team():
+    return render_template("team.html")
+
+@app.route("/token")
+@login_required
+def token():
+    return render_template("token.html")
+
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+
+@app.route("/transfer", methods=["GET", "POST"])
+@login_required
+def transfer():
+    if request.method == "POST":
+        # Add your transfer logic here
+        pass
+    return render_template("transfer.html")
+
+@app.route("/withdrawal")
+@login_required
+def withdrawal():
+    return render_template("withdrawal.html")
+
+@app.route("/package")
+@login_required
+def package():
+    return render_template("package.html")
+
+@app.route("/claim")
+@login_required
+def claim():
+    return render_template("claim.html")
+@login_required
 @app.route("/balance", methods=["GET"])
-@jwt_required()
 def get_balance():
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = current_user
     return render_template("balance.html", balance=user.balance)
-
 
 @app.route("/packages", methods=["GET"])
 def get_packages():
@@ -292,8 +400,6 @@ def get_packages():
         {"name": p.name, "price": p.price, "reward": p.reward} for p in packages
     ]
     return render_template("packages.html", packages=package_list)
-
-
 @app.route("/mpesa_pay", methods=["GET", "POST"])
 def mpesa_payment():
     if request.method == "POST":
