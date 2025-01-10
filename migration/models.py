@@ -83,3 +83,14 @@ class Package(db.Model):
     # Relationships
     transactions = db.relationship("Transaction", backref="package", lazy=True)
 
+class Account(db.Model):
+    __tablename__ = "account"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, unique=True)
+    balance = db.Column(db.Float, default=0.0)
+
+    #Relationships
+    user = db.relationship("User", backref="account", uselist=False)
+
+
