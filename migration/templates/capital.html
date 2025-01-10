@@ -256,7 +256,7 @@ directions_run
                 <span>Apply-Your Investment <span class="material-symbols-outlined">
                  monitoring
                  </span></span>
-                <form action="./request.php" method="POST">
+                <form action="{{url_for('capital')}}" method="POST">
                     <select name="acc" id="investment" required onchange="runInvestment()">
                         <option value="0">How-long..</option>
                         <option value="1">1-Day</option>
