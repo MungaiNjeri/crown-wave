@@ -19,12 +19,11 @@ class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32), nullable=False)
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(64), unique=True, nullable=False)
     user_role = db.Column(db.String(32), default="user", nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    active = db.Column(db.Boolean, default=True, nullable=False)
+    verified = db.Column(db.Boolean, default=False, nullable=False)
 
 
     @validates('email')
