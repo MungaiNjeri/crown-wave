@@ -59,3 +59,15 @@ class Account(db.Model):
     #Relationships
     user = db.relationship("User", backref="account", uselist=False)
 
+    @validates("user_id")
+    def validate_user_id(self, key, user_id):
+        if not user_id or user_id <= 0:
+            raise ValueError("Invalid user_id. It must be a positive integer.")
+        return user_id
+
+    @validates("balance")
+    def validate_balance(self, key, balance):
+        if balance < 0:
+            raise ValueError("Balance cannot be negative.")
+        return balance
+
