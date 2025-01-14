@@ -36,6 +36,8 @@ jwt = JWTManager(app)
 @app.route('/')
 def index():
     return '<h1>Welcome to crown-wave-server</h1>'
+
+
 @app.route("/signup")
 def signup():
     try:
@@ -53,6 +55,18 @@ def signup():
     except Exception as e:
         logging.error(f"Error creating user: {str(e)}")
         return make_response(jsonify({"errors": [str(e)]}), 400)
+
+@app.route("/login")
+def login():
+    return "<h1> login to your account<h2>"
+
+
+@app.route("/delete/account")
+def delete():
+    return "<h1> delete your user account"
+
+
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
