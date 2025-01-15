@@ -6,6 +6,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager,create_access_token, jwt_required,get_jwt_identity
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
+from models import Account, Transaction
 import os 
 import logging
 
@@ -59,6 +60,83 @@ def signup():
 @app.route("/login")
 def login():
     return "<h1> login to your account<h2>"
+
+
+
+@app.route('/api/accounts', methods=['POST'])
+def create_account():
+    data = request.get_json()
+    new_account = Account(user_id=data['user_id'], balance=data.get('balance', 0.0))
+    db.session.add(new_account)
+    db.session.commit()
+    return jsonify({'message': 'Account created', 'account_id': new_account.account_id}), 201
+
+
+
+@app.route('/api/accounts/<int:account_id>', methods=['GET'])
+def get_account(account_id):
+    account = Account.query.get(account_id)
+    if not account:
+        return jsonify({'error': 'Account not found'}), 404
+    return jsonify({
+        'account_id': account.account_id,
+        'user_id': account.user_id,
+        'balance': account.balance
+    })
+
+@app.route('/api/accounts/<int:account_id>', methods=['PUT'])
+def update_balance(account_id):
+    data = request.get_json()
+    account = Account.query.get(account_id)
+    if not account:
+        return jsonify({'error': 'Account not found'}), 404
+    account.balance = data['balance']
+    db.session.commit()
+    return jsonify({'message': 'Account balance updated'})
+
+
+@app.route('/api/accounts/<int:account_id>', methods=['DELETE'])
+def delete_account(account_id):
+    account = Account.query.get(account_id)
+    if not account:
+        return jsonify({'error': 'Account not found'}), 404
+    db.session.delete(account)
+    db.session.commit()
+    return jsonify({'message': 'Account deleted'})
+
+
+
+@app.route('/api/transactions', methods=['POST'])
+def add_transaction():
+    data = request.get_json()
+    account = Account.query.get(data['account_id'])
+    if not account:
+        return jsonify({'error': 'Account not found'}), 404
+    
+    new_transaction = Transaction(
+        account_id=data['account_id'],
+        description=data['description'],
+        amount=data['amount']
+    )
+    account.balance += data['amount']  # Update account balance
+    db.session.add(new_transaction)
+    db.session.commit()
+    return jsonify({'message': 'Transaction added', 'transaction_id': new_transaction.transaction_id}), 201
+
+
+
+@app.route('/api/accounts/<int:account_id>/transactions', methods=['GET'])
+def get_transactions(account_id):
+    transactions = Transaction.query.filter_by(account_id=account_id).all()
+    return jsonify([
+        {
+            'transaction_id': t.transaction_id,
+            'description': t.description,
+            'amount': t.amount
+        } for t in transactions
+    ])
+
+
 
 
 @app.route("/delete/account")
