@@ -69,7 +69,7 @@ class Account(db.Model):
     def validate_balance(self, key, balance):
         if balance < 0:
             raise ValueError("Balance cannot be negative.")
-        return balance
+        return balance    
 
 class Transaction(db.Model, SerializerMixin):
     __tablename__ = 'transaction'
@@ -77,7 +77,54 @@ class Transaction(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     account_id = db.Column(db.Integer,db.ForeignKey("account.id"), unique=True, nullable=False)
     description = db.Column(db.String(64), unique=True, nullable=False)
+    image = db.Column(db.String,nullable=True)
     amount = db.Column(db.Integer, unique = False , nullable = False)
+    price = db.Column(db.Float, nullable=False)
 
+
+
+class Customercare(db.Model):
+    __tablename__ = 'customercare'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    message = db.Column(db.Text, nullable=False )
+    time = db.Column(db.String, nullable=False)
+    status = db.Column(db.String, default='pending')
+
+    @validates('message')
+    def validate_message(self, key, message):
+
+        if len(message) < 10 or len(message) > 500:
+            raise ValueError("Message must be between 10 and 500 characters")
+        return message
+    @validates('time')
+    def validate_time(self, key, time):
+        if not re.match(r"^\d{2}:\d{2}:\d{2}$", time):
+            raise ValueError("Time must be in HH:MM:SS format")
+        return time
+    
     def __repr__(self):
-        return f"<User {self.username}"
+        return f"<Customercare {self.id}>"
+    
+
+class Package(db.Model):
+    __tablename__ = 'package'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    
+    @validates('name')
+    def validate_name(self, key, name):
+        if len(name) < 3 or len(name) > 20:
+            raise ValueError("Name must be between 3 and 20 characters")
+        return name
+    @validates('price')
+    def validate_price(self, key, price):
+        if price < 0:
+            raise ValueError("Price cannot be negative.")
+        return price
+    def __repr__(self):
+        return f"<Package {self.name}>"
+        
+    
