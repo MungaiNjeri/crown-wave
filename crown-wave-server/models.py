@@ -1,3 +1,4 @@
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from sqlalchemy.orm import validates
@@ -19,11 +20,15 @@ class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, nullable=False)
+    Fullname = db.Column(db.String(100), unique = False,nullable = False)
+    username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(64), unique=True, nullable=False)
-    user_role = db.Column(db.String(32), default="user", nullable=False)
-    password = db.Column(db.String(128), nullable=False)
+    password = db.Column(db.String(32),  nullable=False)
+    userType = db.Column(db.String(128), default = "user" ,nullable=False)
     verified = db.Column(db.Boolean, default=False, nullable=False)
+    referralCode = db.Column(db.String,nullable = False)
+    referredBy = db.Column(db.Integer, nullable = False)
+    accountTokenId = db.Column(db.Integer, db.ForeignKey("token.id"),default=0, nullable = True)
 
 
     @validates('email')
@@ -104,27 +109,4 @@ class Customercare(db.Model):
         return time
     
     def __repr__(self):
-        return f"<Customercare {self.id}>"
-    
-
-class Package(db.Model):
-    __tablename__ = 'package'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), unique=True, nullable=False)
-    price = db.Column(db.Float, nullable=False)
-    
-    @validates('name')
-    def validate_name(self, key, name):
-        if len(name) < 3 or len(name) > 20:
-            raise ValueError("Name must be between 3 and 20 characters")
-        return name
-    @validates('price')
-    def validate_price(self, key, price):
-        if price < 0:
-            raise ValueError("Price cannot be negative.")
-        return price
-    def __repr__(self):
-        return f"<Package {self.name}>"
-        
-    
+        return f"<User {self.usern}"
