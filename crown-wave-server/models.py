@@ -1,3 +1,4 @@
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from sqlalchemy.orm import validates
@@ -19,11 +20,15 @@ class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, nullable=False)
+    Fullname = db.Column(db.String(100), unique = False,nullable = False)
+    username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(64), unique=True, nullable=False)
-    user_role = db.Column(db.String(32), default="user", nullable=False)
-    password = db.Column(db.String(128), nullable=False)
+    password = db.Column(db.String(32),  nullable=False)
+    userType = db.Column(db.String(128), default = "user" ,nullable=False)
     verified = db.Column(db.Boolean, default=False, nullable=False)
+    referralCode = db.Column(db.String,nullable = False)
+    referredBy = db.Column(db.Integer, nullable = False)
+    accountTokenId = db.Column(db.Integer, db.ForeignKey("token.id"),default=0, nullable = True)
 
 
     @validates('email')
@@ -81,3 +86,23 @@ class Transaction(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f"<User {self.username}"
+
+
+class Product(db.Model, SerializerMixin):
+    __tablename__ = "Product"
+    id = db.Column(db.Integer,primary_key = True)
+    description = db.Column(db.String(200),  nullable = False)
+    price = db.Column(db.Float, nullable = False)
+    units = db.Column(db.Float, default = 0, nullable = False)
+
+
+class Token(db.Model,SerializerMixin):
+    __tablename = 'Token'
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(20), nullable = False)
+    description = db.Column(db.String(200), nullable = False)
+    price = db.Column(db.Float, nullable = False)
+
+
+
+
