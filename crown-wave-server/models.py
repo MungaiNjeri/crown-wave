@@ -109,4 +109,24 @@ class Customercare(db.Model):
         return time
     
     def __repr__(self):
-        return f"<User {self.usern}"
+        return f"<Customercare {self.id}>"
+    
+
+class Package(db.Model):
+    __tablename__ = 'package'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    
+    @validates('name')
+    def validate_name(self, key, name):
+        if len(name) < 3 or len(name) > 20:
+            raise ValueError("Name must be between 3 and 20 characters")
+        return name
+    @validates('price')
+    def validate_price(self, key, price):
+        if price < 0:
+            raise ValueError("Price cannot be negative.")
+        return price
+    def __repr__(self):
