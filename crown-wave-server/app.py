@@ -6,6 +6,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager,create_access_token, jwt_required,get_jwt_identity
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
+from models import Account, Transaction, Customercare
 import os 
 import logging
 
@@ -83,6 +84,77 @@ def get_current_user():
 @app.route("/logout")
 def logout():
     return "<h1> User log out</h1>"
+
+
+# Resources
+class CustomercareListResource(Resource):
+    @jwt_required()
+    def get(self):
+        try:
+            customercares = Customercare.query.all()
+            return [customercare.to_dict() for customercare in customercares], 200
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+    @jwt_required()
+    def post(self):
+        try:
+            data = request.get_json()
+            message = data.get('message')
+            time = data.get('time')
+
+            customercare = Customercare(message=message, time=time)
+            db.session.add(customercare)
+            db.session.commit()
+
+            return customercare.to_dict(), 201
+        except ValueError as e:
+            return {'error': str(e)}, 400
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+class CustomercareResource(Resource):
+    @jwt_required()
+    def get(self, customercare_id):
+        try:
+            customercare = Customercare.query.get_or_404(customercare_id)
+            return customercare.to_dict(), 200
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+    @jwt_required()
+    def put(self, customercare_id):
+        try:
+            customercare = Customercare.query.get_or_404(customercare_id)
+            data = request.get_json()
+
+            customercare.message = data.get('message', customercare.message)
+            customercare.time = data.get('time', customercare.time)
+            db.session.commit()
+
+            return customercare.to_dict(), 200
+        except ValueError as e:
+            return {'error': str(e)}, 400
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+    @jwt_required()
+    def delete(self, customercare_id):
+        try:
+            customercare = Customercare.query.get_or_404(customercare_id)
+            db.session.delete(customercare)
+            db.session.commit()
+
+            return {'message': 'Customercare deleted successfully'}, 200
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+# Add routes to the API
+api.add_resource(CustomercareListResource, '/customercare')
+api.add_resource(CustomercareResource, '/customercare/<int:customercare_id>')
+
+
+
 
 @app.route("/delete/account")
 def delete():
