@@ -88,6 +88,7 @@ class Transaction(db.Model, SerializerMixin):
 
 
 
+
 class Customercare(db.Model):
     __tablename__ = 'customercare'
     
@@ -129,4 +130,4 @@ class Package(db.Model):
         if price < 0:
             raise ValueError("Price cannot be negative.")
         return price
-    def __repr__(self):
+
