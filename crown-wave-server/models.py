@@ -20,14 +20,14 @@ class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    Fullname = db.Column(db.String(100), unique = False,nullable = False)
+    fullname = db.Column(db.String(100), unique = False,nullable = False)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(64), unique=True, nullable=False)
     password = db.Column(db.String(32),  nullable=False)
     userType = db.Column(db.String(128), default = "user" ,nullable=False)
     verified = db.Column(db.Boolean, default=False, nullable=False)
-    referralCode = db.Column(db.String,nullable = False)
-    referredBy = db.Column(db.Integer, nullable = False)
+    referralCode = db.Column(db.String,default = "Null", nullable = False)
+    referredBy = db.Column(db.Integer, default = "Null", nullable = False)
     accountTokenId = db.Column(db.Integer, db.ForeignKey("token.id"),default=0, nullable = True)
 
 
