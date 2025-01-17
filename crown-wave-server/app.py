@@ -178,6 +178,26 @@ def new_token():
     except Exception as e:
         return make_response(jsonify({"errors": [str(e)]}))
 
+@app.route("/tokens", methods = ["GET"])
+def tokens():
+
+    tokens = []
+    for token in Token.query.all():
+        token_dict = {
+            "id": token.id,
+            "name": token.name,
+            "description": token.description,
+            "price": token.price,
+        }
+        tokens.append(token_dict)
+
+    response = make_response(
+        tokens,
+        200,
+        {"Content-Type": "application/json"}
+    )
+
+    return response
 
 
 
