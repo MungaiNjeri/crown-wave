@@ -1,5 +1,5 @@
 from flask import Flask, request, make_response, jsonify, send_from_directory
-from models import db,User, Token, Product, Transaction, Account
+from models import db,User, Token,  Transaction, Account, Customercare, Package
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_cors import CORS 
@@ -18,6 +18,7 @@ CORS(app)
 
 # Configure upload folder and allowed extensions
 UPLOAD_FOLDER = 'images/'
+
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 

@@ -78,13 +78,13 @@ class Account(db.Model):
 
 class Transaction(db.Model, SerializerMixin):
     __tablename__ = 'transaction'
-
-    id = db.Column(db.Integer, primary_key=True)
+id = db.Column(db.Integer, primary_key=True)
     account_id = db.Column(db.Integer,db.ForeignKey("account.id"), unique=True, nullable=False)
     description = db.Column(db.String(64), unique=True, nullable=False)
     image = db.Column(db.String,nullable=True)
     amount = db.Column(db.Integer, unique = False , nullable = False)
     price = db.Column(db.Float, nullable=False)
+
 
 
 
@@ -129,4 +129,17 @@ class Package(db.Model):
         if price < 0:
             raise ValueError("Price cannot be negative.")
         return price
-    def __repr__(self):
+class Token(db.Model, SerializerMixin):
+    __tablename__ = "token"
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(20), nullable = False)
+    description = db.Column(db.String(200), nullable = False)
+    price = db.Column(db.Float, nullable = False)
+
+
+
+
+
+
+
+
