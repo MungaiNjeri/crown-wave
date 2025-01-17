@@ -45,6 +45,7 @@ def index():
 def signup():
     try:
         new_record = User(
+            fullname = request.json["fullname"],
             username=request.json["username"],
             email=request.json["email"],
             password = request.json["password"]
@@ -78,7 +79,8 @@ def get_current_user():
     current_user_id = get_jwt_identity()
     user = User.query.filter_by(id=current_user_id).first()
     if user:
-        return make_response(jsonify(user.to_dict()), 200)
+        current_user = user.to_dict()
+        return make_response(jsonify(current_user["username"]), 200)
     else:
         return make_response(jsonify({"error": "User not found"}), 404)
 
@@ -90,6 +92,7 @@ def logout():
 
 # Resources
 class CustomercareListResource(Resource):
+    
     @jwt_required()
     def get(self):
         try:

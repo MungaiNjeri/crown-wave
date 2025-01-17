@@ -1,3 +1,4 @@
+
 async function currentUser(token){
 	await fetch('http://127.0.0.1:5555/current_user',{
                 method: 'GET',
@@ -7,13 +8,17 @@ async function currentUser(token){
 		}})
 	.then((res)=> {
 		if(res.ok){
-			console.log(res.status)
-			return res.json()}})
-	.then (data => console.log(data))
+			return res
+		}else{
+			console.log(res)
+		}
+	})
+//	.then (data => console.log(data))
 
 
 
 }
+/*
 // Function to log in the user
 async function login(username, password) {
     const loginEndpoint = "http://127.0.0.1:5555/login"; // Replace with your backend's login endpoint
@@ -57,7 +62,9 @@ async function login(username, password) {
 }
 
 // Example usage:
-const username = "theHandsomeNigga"; // Replace with the user's username
+const username = "AhandsomeNigga"; // Replace with the user's username
 const password = "12345678"; // Replace with the user's password
 login(username, password);
+*/
 
+currentUser('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczNzEwNDY3NywianRpIjoiMjBhNWViZjktOTBiYi00Y2Q2LWE2YTgtNjJiZmNhOWQzNmRmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzM3MTA0Njc3LCJjc3JmIjoiOTMyNDUxMmYtY2Q3Ny00ODkxLWE1ZWEtMjA1NzRjM2ZlZmNjIiwiZXhwIjoxNzM3MTA1NTc3fQ.3rb9QhfIW8lWQk8cYFSYMNVl4mm4IP0ZuB3OzJAP52Q')
