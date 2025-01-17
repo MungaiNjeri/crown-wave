@@ -78,7 +78,7 @@ class Account(db.Model):
 
 class Transaction(db.Model, SerializerMixin):
     __tablename__ = 'transaction'
-id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     account_id = db.Column(db.Integer,db.ForeignKey("account.id"), unique=True, nullable=False)
     description = db.Column(db.String(64), unique=True, nullable=False)
     image = db.Column(db.String,nullable=True)

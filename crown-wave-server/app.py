@@ -17,6 +17,7 @@ app = Flask(__name__)
 CORS(app) 
 
 # Configure upload folder and allowed extensions
+
 UPLOAD_FOLDER = 'images/'
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
