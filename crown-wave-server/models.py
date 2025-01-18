@@ -131,6 +131,15 @@ class Package(db.Model):
         if price < 0:
             raise ValueError("Price cannot be negative.")
         return price
+    
+    def __repr__(self):
+        return f"<Package {self.id}>"
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "price": self.price
+        }
 
 
 class Token(db.Model, SerializerMixin):
