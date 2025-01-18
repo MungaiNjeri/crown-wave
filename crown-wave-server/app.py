@@ -191,6 +191,91 @@ api.add_resource(CustomercareResource, '/customercare/<int:customercare_id>')
 
 
 
+class Createaccount(Resource):
+    @jwt_required()
+    def post(self):
+        data = request.get_json()
+        user_id = get_jwt_identity()  # Get user ID from JWT
+        account = Account(user_id=user_id, account_type=data.get('account_type'))
+        db.session.add(account)
+        db.session.commit()
+        return jsonify({'message': 'Account created successfully'}), 201
+
+
+class Addaccount(Resource):
+    @jwt_required()
+    def post(self):
+        current_user =get_jwt_identity()
+        data = request.get_json()
+        account = Account(
+            user_id=current_user['id'],
+           balance=data.get('balance', 0.0),
+            account_type=data['account_type']
+        )
+        db.session.add(account)
+        db.session.commit()
+        return jsonify({"message": "Account created successfully", "account": {
+            "id": account.id,
+            "user_id": account.user_id,
+            "balance": account.balance,
+            "account_type": account.account_type
+        }})
+
+class UpdateAccountBalance(Resource):
+    @jwt_required()
+    def put(self, account_id):
+        current_user = get_jwt_identity()
+        data = request.get_json()
+        account = Account.query.filter_by(id=account_id, user_id=current_user['id']).first()
+        if not account:
+            return jsonify({"error": "Account not found or unauthorized"}), 404
+
+        new_balance = data.get('balance')
+        if new_balance is None or new_balance < 0:
+            return {"error": "Balance must be a positive number"}, 400
+
+        account.balance = new_balance
+        db.session.commit()
+        return jsonify({"message": "Balance updated successfully", "account": {
+            "id": account.id,
+            "user_id": account.user_id,
+            "balance": account.balance,
+            "account_type": account.account_type
+        }})
+    
+class CreateTransaction(Resource):
+    @jwt_required()
+    def post(self):
+        data = request.get_json()
+        user_id = get_jwt_identity()
+        account = Account.query.filter_by(user_id=user_id).first()
+        if not account:
+            return jsonify({'message': 'Account not found'}), 404
+        # Validate and process transaction logic here
+        # ...
+        amount = data.get('amount')
+        if amount is None:
+            return jsonify({'message': 'Missing required field: amount'}), 400
+        try:
+            amount = float(amount)
+        except ValueError:
+            return jsonify({'message': 'Invalid amount format'}), 400
+
+        if account.balance + amount < 0:
+            return jsonify({'message': 'Insufficient funds for transaction'}), 400
+        transaction = Transaction(account_id=account.id, description=data.get('description'), amount=data.get('amount'))
+        db.session.add(transaction)
+        db.session.commit()
+
+        return jsonify({"message": "Transaction created successfully", "transaction": {
+            "id": transaction.id,
+            "account_id": transaction.account_id,
+            "description": transaction.description,
+            "amount": transaction.amount}})
+api.add_resource(Createaccount, '/Createaccounts')
+api.add_resource(Addaccount, '/addaccounts')
+api.add_resource(UpdateAccountBalance, '/updateBalance/<int:account_id>')
+api.add_resource(CreateTransaction, '/transactions')
 
 @app.route("/delete/account")
 def delete():
