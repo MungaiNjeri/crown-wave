@@ -277,6 +277,60 @@ api.add_resource(Addaccount, '/addaccounts')
 api.add_resource(UpdateAccountBalance, '/updateBalance/<int:account_id>')
 api.add_resource(CreateTransaction, '/transactions')
 
+
+class PackageListResource(Resource):
+    @jwt_required()
+    def get(self):
+        packages = Package.query.all()
+        return [package.to_dict() for package in packages]
+    @jwt_required()
+    def post(self):
+        data = request.get_json()
+        name = data.get('name')
+        description = data.get('description')
+        price = data.get('price')
+
+        if not name or not description or not price:
+            return {'error': 'Missing required fields: name, description, price'}, 400
+
+        try:
+            price = float(price)
+        except ValueError:
+            return {'error': 'Invalid price format'}, 400
+
+        package = Package(name=name, description=description, price=price)
+        db.session.add(package)
+        db.session.commit()
+
+        return package.to_dict(), 201
+    
+
+class PackageResource(Resource):
+    @jwt_required()
+    def get(self, package_id):
+        package = Package.query.get_or_404(package_id)
+        return package.to_dict()
+    @jwt_required()
+    def put(self, package_id):
+        package = Package.query.get_or_404(package_id)
+        data = request.get_json()
+        package.name = data.get('name', package.name)
+        package.price = data.get('price', package.price)
+
+        db.session.commit()
+        return package.to_dict()
+    @jwt_required()
+    def delete(self, package_id):
+        package = Package.query.get_or_404(package_id)
+        db.session.delete(package)
+        db.session.commit()
+        return {'message': 'Package deleted successfully'}, 200
+api.add_resource(PackageListResource,'/packages')
+api.add_resource(PackageResource, '/packages/<int:package_id>')    
+
+
+
+
 @app.route("/delete/account")
 def delete():
     return "<h1> delete your user account"
