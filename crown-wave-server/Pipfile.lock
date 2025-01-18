@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cdde1ea4a8db191da81d080ac12e781282341e12f6dfa1ef658f3070acb46e8d"
+            "sha256": "ea0d15488e6e25681f8fe6608fbe50de3c8886500fdbcbcc6d2bd99ef574d419"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -39,6 +39,14 @@
             "markers": "python_version >= '3.9'",
             "version": "==1.9.0"
         },
+        "certifi": {
+            "hashes": [
+                "sha256:1275f7a45be9464efc1173084eaa30f866fe2e47d389406136d332ed4967ec56",
+                "sha256:b650d30f370c2b724812bee08008be0c4163b163ddaec3f2546c1caf65f191db"
+            ],
+            "markers": "python_version >= '3.6'",
+            "version": "==2024.12.14"
+        },
         "click": {
             "hashes": [
                 "sha256:63c132bbbed01578a06712a2d1f497bb62d9c1c0d329b7903a866228027263b2",
@@ -46,6 +54,14 @@
             ],
             "markers": "python_version >= '3.7'",
             "version": "==8.1.8"
+        },
+        "cloudinary": {
+            "hashes": [
+                "sha256:b68ed8d9b879165a84f3c0f7eb1989e21014910edfaea35265faf170097f7baa",
+                "sha256:d99129031ed818bbf21d7a0c63fc94ad4f93f0d7f1b047e54d4ac0d2f91b3c35"
+            ],
+            "index": "pypi",
+            "version": "==1.42.1"
         },
         "colorama": {
             "hashes": [
@@ -363,6 +379,15 @@
             "markers": "python_version >= '3.9'",
             "version": "==2.10.1"
         },
+        "python-dotenv": {
+            "hashes": [
+                "sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca",
+                "sha256:f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.8'",
+            "version": "==1.0.1"
+        },
         "pytz": {
             "hashes": [
                 "sha256:2aa355083c50a0f93fa581709deac0c9ad65cca8a9e9beac660adcbd493c798a",
@@ -457,6 +482,14 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==4.12.2"
+        },
+        "urllib3": {
+            "hashes": [
+                "sha256:1cee9ad369867bfdbbb48b7dd50374c0967a0bb7710050facf0dd6911440e3df",
+                "sha256:f8c5449b3cf0861679ce7e0503c7b44b5ec981bec0d1d3795a07f1ba96f0204d"
+            ],
+            "markers": "python_version >= '3.9'",
+            "version": "==2.3.0"
         },
         "werkzeug": {
             "hashes": [

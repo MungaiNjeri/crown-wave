@@ -1,4 +1,4 @@
-g[source]]
+[[source]]
 url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
@@ -11,6 +11,8 @@ flask-migrate = "*"
 flask-restful = "*"
 flask-cors = "*"
 flask-jwt-extended = "*"
+python-dotenv = "*"
+cloudinary = "*"
 
 [dev-packages]
 
