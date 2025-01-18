@@ -60,7 +60,9 @@ class Account(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, unique=True)
     balance = db.Column(db.Float, default=0.0)
+    account_type = db.Column(db.String(50), nullable=False) 
 
+  
     #Relationships
     user = db.relationship("User", backref="account", uselist=False)
 
