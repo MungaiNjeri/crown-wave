@@ -129,17 +129,24 @@ class Package(db.Model):
         if price < 0:
             raise ValueError("Price cannot be negative.")
         return price
+
+
 class Token(db.Model, SerializerMixin):
     __tablename__ = "token"
+
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(20), nullable = False)
     description = db.Column(db.String(200), nullable = False)
     price = db.Column(db.Float, nullable = False)
 
 
+class Product(db.Model, SerializerMixin):
+    __tablename__ = "Product"
+    id = db.Column(db.Integer,primary_key = True)
+    description = db.Column(db.String(200),  nullable = False)
+    price = db.Column(db.Float, nullable = False)
+    units = db.Column(db.Float, default = 0, nullable = False)
 
 
-
-
-
+   
 
