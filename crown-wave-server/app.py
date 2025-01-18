@@ -62,7 +62,7 @@ def signup():
 
 @app.route("/login",methods = ["POST"])
 def login():
-    username = request.json.get("username", None)
+    username =request.json.get("username", None)
     password = request.json.get("password", None)
     user = User.query.filter_by(username=username).first()
 
@@ -89,6 +89,35 @@ def get_current_user():
 def logout():
     return "<h1> User log out</h1>"
 
+
+#  User /patch and /put 
+class UserById(Resource):
+    @jwt_required()
+    def get(self, id):
+        user = User.query.filter_by(id=id).first()
+        return make_response(jsonify(user.to_dict()),200)
+    #@jwt_required()
+    def patch(self, id):
+        data = request.get_json()
+        user = User.query.filter_by(id=id).first()
+        try:
+            for attr in data:
+                if(attr == "password"):
+                    data.set_password(request.json["password"])       
+                    setattr(user,attr,data[attr])
+                else:    
+                    setattr(user, attr, data[attr])
+        
+            db.session.add(user)
+            db.session.commit()
+        except Exception as e:
+            return make_response(jsonify(str(e)))
+        return make_response(user.to_dict(), 202)
+    @jwt_required()
+    def delete(self, id):
+        pass
+
+api.add_resource(UserById, '/user/<int:id>')
 
 # Resources
 class CustomercareListResource(Resource):
