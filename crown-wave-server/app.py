@@ -47,7 +47,6 @@ def index():
 def signup():
     try:
         new_record = User(
-            fullname = request.json["fullname"],
             username=request.json["username"],
             email=request.json["email"],
             password = request.json["password"]
@@ -254,6 +253,26 @@ def create_product():
         return make_response(jsonify("success: Product added"),201)
     except Exception as e:
         return make_response(jsonify({error: [str(e)]}))
+
+
+
+class Products(Resource):
+    def get(self):
+        response_dict_list = [n.to_dict() for n in Product.query.all()]
+        return make_response(jsonify(response_dict_list), 200)
+class ProductsById(Resource):
+    def get(self,id):
+        product = Product.query.filter_by(id=id).first()
+        if product:
+            return make_response(jsonify(product.to_dict()), 200)
+        else:
+            return make_response(jsonify({"error": "Product not found"}), 404)
+        
+
+
+api.add_resource(Products, "/products")
+api.add_resource(ProductsById, "/products/<int:id>")
+
 
 
 if __name__ == '__main__':
