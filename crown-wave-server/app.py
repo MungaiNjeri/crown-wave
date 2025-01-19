@@ -1,6 +1,6 @@
 from flask import Flask, request, make_response, jsonify, send_from_directory
 
-from models import db,User, Token,  Transaction, Account, Customercare, Package
+from models import db,User, Token,  Transaction, Account, Customercare, Package,Product
 
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
