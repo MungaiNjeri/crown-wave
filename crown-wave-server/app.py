@@ -279,7 +279,7 @@ class PackageById(Resource):
         if product:
             return make_response(jsonify(product.to_dict()), 200)
         else:
-            return make_response(jsonify({"error": "Product not found"}), 404)
+            return make_response(jsonify({"error": "Package not found"}), 404)
 
 
 api.add_resource(Packages,"/packages")
