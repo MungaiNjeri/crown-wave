@@ -242,7 +242,7 @@ def tokens():
 @app.route("/product",methods=["POST"])
 def create_product():
     try:
-        new_record = PRODUCT(
+        new_record = Product(
         description = request.json["name"],
         price = request.json["price"],
         units = request.json["units"],
@@ -254,13 +254,44 @@ def create_product():
     except Exception as e:
         return make_response(jsonify({error: [str(e)]}))
 
+#packages
+class Packages(Resource):
+    def get(self):
+        response_dict_list = [n.to_dict() for n in Product.query.all()]
+        return make_response(jsonify(response_dict_list), 200)
+    def post(self):
+
+        try:
+            new_record =Package(
+                        name = request.get_json["name"],
+                        price = request.get_json["price"]
+
+                    )
+            db.session.add(new_record)
+            db.session.commit()
+            return make_response(jsonify("success: package added"),201)
+        except Exception as e:
+            return make_response(jsonify({error: [str(e)]})
+                    )
+class PackageById(Resource):
+    def get(self,id):
+        package = Package.query.filter_by(id=id).first()
+        if product:
+            return make_response(jsonify(product.to_dict()), 200)
+        else:
+            return make_response(jsonify({"error": "Product not found"}), 404)
+
+
+api.add_resource(Packages,"/packages")
+api.add_resource(PackageById,"/package/<int:id>")
+
 
 
 class Products(Resource):
     def get(self):
         response_dict_list = [n.to_dict() for n in Product.query.all()]
         return make_response(jsonify(response_dict_list), 200)
-class ProductsById(Resource):
+class ProductById(Resource):
     def get(self,id):
         product = Product.query.filter_by(id=id).first()
         if product:
@@ -271,7 +302,7 @@ class ProductsById(Resource):
 
 
 api.add_resource(Products, "/products")
-api.add_resource(ProductsById, "/products/<int:id>")
+api.add_resource(ProductById, "/product/<int:id>")
 
 
 
