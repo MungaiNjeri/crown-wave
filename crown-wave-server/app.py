@@ -1,6 +1,6 @@
 from flask import Flask, request, make_response, jsonify, send_from_directory
 
-from models import db,User, Token,  Transaction, Account, Customercare, Package
+from models import db,User, Token,  Transaction, Account, Customercare, Package,Product
 
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
@@ -47,7 +47,6 @@ def index():
 def signup():
     try:
         new_record = User(
-            fullname = request.json["fullname"],
             username=request.json["username"],
             email=request.json["email"],
             password = request.json["password"]
@@ -100,21 +99,24 @@ class UserById(Resource):
         return make_response(jsonify(user.to_dict()),200)
     #@jwt_required()
     def patch(self, id):
-        data = request.get_json()
         user = User.query.filter_by(id=id).first()
-        try:
-            for attr in data:
-                if(attr == "password"):
-                    data.set_password(request.json["password"])       
-                    setattr(user,attr,data[attr])
-                else:    
-                    setattr(user, attr, data[attr])
         
-            db.session.add(user)
-            db.session.commit()
+        if not user:
+            return make_response(jsonify({"error": "User not found"}), 404)
+
+        try:
+            for key, value in request.json.items():
+                if hasattr(user, key):
+                    if key == 'password':
+                        value = generate_password_hash(value) #.decode('utf-8')
+                    setattr(user, key, value)
+                    db.session.commit()
+    
+                    return make_response(jsonify(user.to_dict()), 200)
+        
         except Exception as e:
-            return make_response(jsonify(str(e)))
-        return make_response(user.to_dict(), 202)
+            return make_response(jsonify({"errors": [str(e)]}), 400)
+
     @jwt_required()
     def delete(self, id):
         pass
@@ -191,145 +193,6 @@ api.add_resource(CustomercareResource, '/customercare/<int:customercare_id>')
 
 
 
-class Createaccount(Resource):
-    @jwt_required()
-    def post(self):
-        data = request.get_json()
-        user_id = get_jwt_identity()  # Get user ID from JWT
-        account = Account(user_id=user_id, account_type=data.get('account_type'))
-        db.session.add(account)
-        db.session.commit()
-        return jsonify({'message': 'Account created successfully'}), 201
-
-
-class Addaccount(Resource):
-    @jwt_required()
-    def post(self):
-        current_user =get_jwt_identity()
-        data = request.get_json()
-        account = Account(
-            user_id=current_user['id'],
-           balance=data.get('balance', 0.0),
-            account_type=data['account_type']
-        )
-        db.session.add(account)
-        db.session.commit()
-        return jsonify({"message": "Account created successfully", "account": {
-            "id": account.id,
-            "user_id": account.user_id,
-            "balance": account.balance,
-            "account_type": account.account_type
-        }})
-
-class UpdateAccountBalance(Resource):
-    @jwt_required()
-    def put(self, account_id):
-        current_user = get_jwt_identity()
-        data = request.get_json()
-        account = Account.query.filter_by(id=account_id, user_id=current_user['id']).first()
-        if not account:
-            return jsonify({"error": "Account not found or unauthorized"}), 404
-
-        new_balance = data.get('balance')
-        if new_balance is None or new_balance < 0:
-            return {"error": "Balance must be a positive number"}, 400
-
-        account.balance = new_balance
-        db.session.commit()
-        return jsonify({"message": "Balance updated successfully", "account": {
-            "id": account.id,
-            "user_id": account.user_id,
-            "balance": account.balance,
-            "account_type": account.account_type
-        }})
-    
-class CreateTransaction(Resource):
-    @jwt_required()
-    def post(self):
-        data = request.get_json()
-        user_id = get_jwt_identity()
-        account = Account.query.filter_by(user_id=user_id).first()
-        if not account:
-            return jsonify({'message': 'Account not found'}), 404
-        # Validate and process transaction logic here
-        # ...
-        amount = data.get('amount')
-        if amount is None:
-            return jsonify({'message': 'Missing required field: amount'}), 400
-        try:
-            amount = float(amount)
-        except ValueError:
-            return jsonify({'message': 'Invalid amount format'}), 400
-
-        if account.balance + amount < 0:
-            return jsonify({'message': 'Insufficient funds for transaction'}), 400
-        transaction = Transaction(account_id=account.id, description=data.get('description'), amount=data.get('amount'))
-        db.session.add(transaction)
-        db.session.commit()
-
-        return jsonify({"message": "Transaction created successfully", "transaction": {
-            "id": transaction.id,
-            "account_id": transaction.account_id,
-            "description": transaction.description,
-            "amount": transaction.amount}})
-api.add_resource(Createaccount, '/Createaccounts')
-api.add_resource(Addaccount, '/addaccounts')
-api.add_resource(UpdateAccountBalance, '/updateBalance/<int:account_id>')
-api.add_resource(CreateTransaction, '/transactions')
-
-
-class PackageListResource(Resource):
-    @jwt_required()
-    def get(self):
-        packages = Package.query.all()
-        return [package.to_dict() for package in packages]
-    @jwt_required()
-    def post(self):
-        data = request.get_json()
-        name = data.get('name')
-        description = data.get('description')
-        price = data.get('price')
-
-        if not name or not description or not price:
-            return {'error': 'Missing required fields: name, description, price'}, 400
-
-        try:
-            price = float(price)
-        except ValueError:
-            return {'error': 'Invalid price format'}, 400
-
-        package = Package(name=name, description=description, price=price)
-        db.session.add(package)
-        db.session.commit()
-
-        return package.to_dict(), 201
-    
-
-class PackageResource(Resource):
-    @jwt_required()
-    def get(self, package_id):
-        package = Package.query.get_or_404(package_id)
-        return package.to_dict()
-    @jwt_required()
-    def put(self, package_id):
-        package = Package.query.get_or_404(package_id)
-        data = request.get_json()
-        package.name = data.get('name', package.name)
-        package.price = data.get('price', package.price)
-
-        db.session.commit()
-        return package.to_dict()
-    @jwt_required()
-    def delete(self, package_id):
-        package = Package.query.get_or_404(package_id)
-        db.session.delete(package)
-        db.session.commit()
-        return {'message': 'Package deleted successfully'}, 200
-api.add_resource(PackageListResource,'/packages')
-api.add_resource(PackageResource, '/packages/<int:package_id>')    
-
-
-
 
 @app.route("/delete/account")
 def delete():
@@ -374,7 +237,73 @@ def tokens():
 
 
 
-# token API
+
+# product API,S
+@app.route("/product",methods=["POST"])
+def create_product():
+    try:
+        new_record = Product(
+        description = request.json["name"],
+        price = request.json["price"],
+        units = request.json["units"],
+        category = request.json["category"]        
+        )
+        db.session.add(new_record)
+        db.session.commit()
+        return make_response(jsonify("success: Product added"),201)
+    except Exception as e:
+        return make_response(jsonify({error: [str(e)]}))
+
+#packages
+class Packages(Resource):
+    def get(self):
+        response_dict_list = [n.to_dict() for n in Product.query.all()]
+        return make_response(jsonify(response_dict_list), 200)
+    def post(self):
+
+        try:
+            new_record =Package(
+                        name = request.get_json["name"],
+                        price = request.get_json["price"]
+
+                    )
+            db.session.add(new_record)
+            db.session.commit()
+            return make_response(jsonify("success: package added"),201)
+        except Exception as e:
+            return make_response(jsonify({error: [str(e)]})
+                    )
+class PackageById(Resource):
+    def get(self,id):
+        package = Package.query.filter_by(id=id).first()
+        if product:
+            return make_response(jsonify(product.to_dict()), 200)
+        else:
+            return make_response(jsonify({"error": "Package not found"}), 404)
+
+
+api.add_resource(Packages,"/packages")
+api.add_resource(PackageById,"/package/<int:id>")
+
+
+
+class Products(Resource):
+    def get(self):
+        response_dict_list = [n.to_dict() for n in Product.query.all()]
+        return make_response(jsonify(response_dict_list), 200)
+class ProductById(Resource):
+    def get(self,id):
+        product = Product.query.filter_by(id=id).first()
+        if product:
+            return make_response(jsonify(product.to_dict()), 200)
+        else:
+            return make_response(jsonify({"error": "Product not found"}), 404)
+        
+
+
+api.add_resource(Products, "/products")
+api.add_resource(ProductById, "/product/<int:id>")
+
 
 
 if __name__ == '__main__':

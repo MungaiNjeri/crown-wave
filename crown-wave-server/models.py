@@ -19,8 +19,8 @@ db = SQLAlchemy(metadata=metadata)
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True)
-    fullname = db.Column(db.String(100), unique = False,nullable = False)
+    
+    id = db.Column(db.Integer, primary_key=True) 
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(64), unique=True, nullable=False)
     password = db.Column(db.String(32),  nullable=False)
@@ -34,6 +34,7 @@ class User(db.Model, SerializerMixin):
     @validates('email')
     def validate_email(self, key, email):
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            
             raise ValueError("Invalid email address")
         return email
 
@@ -156,8 +157,7 @@ class Product(db.Model, SerializerMixin):
     id = db.Column(db.Integer,primary_key = True)
     description = db.Column(db.String(200),  nullable = False)
     price = db.Column(db.Float, nullable = False)
-    units = db.Column(db.Float, default = 0, nullable = False)
+    units = db.Column(db.Integer, default = 0, nullable = False)
+    category = db.Column(db.String(20), nullable = False) 
 
-
-   
 
