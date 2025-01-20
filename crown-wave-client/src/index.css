@@ -1,0 +1,21 @@
+@import './styles/theme.css';
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  color: rgba(--blue-a1);
+  background-color: var(--blue-3);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  width: 100%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+
+}

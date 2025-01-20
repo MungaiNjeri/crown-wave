@@ -1,0 +1,20 @@
+
+
+#signup{
+    padding: 1px;
+    width: 1000px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-radius: 10px;
+    background-color: #111725;
+    color: #D5E2FF;
+}
+#signup-left-aside{
+    background-image: url('https://cbx-prod.b-cdn.net/COLOURBOX58581056.jpg?width=800&height=800&quality=70');
+}
+#signup-right-aside{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
