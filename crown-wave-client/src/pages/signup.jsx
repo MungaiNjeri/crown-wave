@@ -1,5 +1,6 @@
 import React from "react";
 import Input from "../components/input";
+import Button from "../components/button";
 import './pages-styles/signup.css'
 
 function Signup(){
@@ -43,8 +44,13 @@ function Signup(){
                         className = "input"
                     />
                     </form>
-
-                    <p>Already have an account? <a href="/login">Log in.</a></p>
+                    <Button 
+                            type="submit"
+                            placeholder="Signup"
+                            //onClick: PropTypes.func.isRequired,
+                            className = 'button'
+                    />
+                    <p>Already have an account? <a href="/login"><h3>Log in.</h3></a></p>
                 </div>
             </div>
         
