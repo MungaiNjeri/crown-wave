@@ -1,20 +1,17 @@
 
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import MetaData
+
+from config import db
 from sqlalchemy.orm import validates
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy_serializer import SerializerMixin
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
 from decimal import Decimal
+from datetime import datetime
 
-metadata = MetaData(
-    naming_convention={
-        "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-    }
-)
 
-db = SQLAlchemy(metadata=metadata)
+
+
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
@@ -62,7 +59,7 @@ class Account(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, unique=True)
     balance = db.Column(db.Float, default=0.0)
     account_type = db.Column(db.String(50), nullable=False) 
-
+   
   
     #Relationships
     user = db.relationship("User", backref="account", uselist=False)
@@ -79,15 +76,15 @@ class Account(db.Model):
             raise ValueError("Balance cannot be negative.")
         return balance    
 
-class Transaction(db.Model, SerializerMixin):
-    __tablename__ = 'transaction'
+class TransactionUser(db.Model, SerializerMixin):
+    __tablename__ = 'transactionUser'
     id = db.Column(db.Integer, primary_key=True)
     account_id = db.Column(db.Integer,db.ForeignKey("account.id"), unique=True, nullable=False)
     description = db.Column(db.String(64), unique=True, nullable=False)
     image = db.Column(db.String,nullable=True)
     amount = db.Column(db.Integer, unique = False , nullable = False)
     price = db.Column(db.Float, nullable=False)
-
+    timestamp=db.Column(db.DateTime,default=datetime.utcnow())
 
 
 
@@ -159,5 +156,37 @@ class Product(db.Model, SerializerMixin):
     price = db.Column(db.Float, nullable = False)
     units = db.Column(db.Integer, default = 0, nullable = False)
     category = db.Column(db.String(20), nullable = False) 
+
+
+class Transaction(db.Model):
+    __tablename__ = "Transaction"
+    id = db.Column(db.Integer, primary_key=True)
+    checkout_request_id = db.Column(db.String(100), nullable=True)
+    result_code = db.Column(db.Integer, nullable=False)
+    result_desc = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.Float, nullable=True)
+    mpesa_receipt_number = db.Column(db.String(100), nullable=True)
+    transaction_date = db.Column(db.String(20), nullable=True)
+    phone_number = db.Column(db.String(15), nullable=True)
+
+    def __init__(
+        self,
+        checkout_request_id,
+        result_code,
+        result_desc,
+        amount=None,
+        mpesa_receipt_number=None,
+        transaction_date=None,
+        phone_number=None,
+    ):
+        self.checkout_request_id = checkout_request_id
+        self.result_code = result_code
+        self.result_desc = result_desc
+        self.amount = amount
+        self.mpesa_receipt_number = mpesa_receipt_number
+        self.transaction_date = transaction_date
+        self.phone_number = phone_number
+
+
 
 

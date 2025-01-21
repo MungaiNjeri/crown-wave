@@ -1,41 +1,30 @@
+from config import app,db
+from models import User, Token,  Transaction, Account, Customercare, Package,Product,TransactionUser
 from flask import Flask, request, make_response, jsonify, send_from_directory
+from flask_sqlalchemy import SQLAlchemy
 
-from models import db,User, Token,  Transaction, Account, Customercare, Package,Product
-
-from flask_migrate import Migrate
 from flask_restful import Api, Resource
-from flask_cors import CORS 
 from flask_jwt_extended import JWTManager,create_access_token, jwt_required,get_jwt_identity
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import os 
 import logging
+import json
+from typing import Dict, Any
 
 
-app = Flask(__name__)
-
-# Configure CORS
-CORS(app) 
 
 # Configure upload folder and allowed extensions
 
-UPLOAD_FOLDER = 'images/'
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-DATABASE = os.environ.get("DB_URI", f"sqlite:///{os.path.join(BASE_DIR, 'crown-wave.db')}")
-
-app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "your_secret_key")  # Load from env
 
-migrate = Migrate(app, db)
-db.init_app(app)
+
 api = Api(app)
 jwt = JWTManager(app)
+
+
 
 
 @app.route('/')
@@ -252,7 +241,7 @@ def create_product():
         db.session.commit()
         return make_response(jsonify("success: Product added"),201)
     except Exception as e:
-        return make_response(jsonify({error: [str(e)]}))
+        return make_response(jsonify({'error': [str(e)]}))
 
 #packages
 class Packages(Resource):
@@ -271,13 +260,13 @@ class Packages(Resource):
             db.session.commit()
             return make_response(jsonify("success: package added"),201)
         except Exception as e:
-            return make_response(jsonify({error: [str(e)]})
+            return make_response(jsonify({'error': [str(e)]})
                     )
 class PackageById(Resource):
     def get(self,id):
         package = Package.query.filter_by(id=id).first()
-        if product:
-            return make_response(jsonify(product.to_dict()), 200)
+        if  Product:
+            return make_response(jsonify(Product.to_dict()), 200)
         else:
             return make_response(jsonify({"error": "Package not found"}), 404)
 
@@ -306,5 +295,229 @@ api.add_resource(ProductById, "/product/<int:id>")
 
 
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler("mpesa_callbacks.log"), logging.StreamHandler()],
+)
+logger = logging.getLogger(__name__)
+
+
+
+
+# Define the Transaction model
+
+# MPesa Callback Processor
+class MPesaCallback:
+    @staticmethod
+    def process_callback(callback_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Process the callback data from M-Pesa and extract relevant transaction details.
+
+        Args:
+            callback_data (Dict[str, Any]): Raw callback data from M-Pesa
+
+        Returns:
+            Dict[str, Any]: Processed transaction details
+        """
+        try:
+            body = callback_data.get("Body", {})
+            stkCallback = body.get("stkCallback", {})
+
+            # Extract basic transaction details
+            checkout_request_id = stkCallback.get("CheckoutRequestID")
+            result_code = stkCallback.get("ResultCode")
+            result_desc = stkCallback.get("ResultDesc")
+
+            # Initialize transaction details
+            transaction_details = {
+                "checkout_request_id": checkout_request_id,
+                "result_code": result_code,
+                "result_desc": result_desc,
+                "amount": None,
+                "mpesa_receipt_number": None,
+                "transaction_date": None,
+                "phone_number": None,
+            }
+
+            # If transaction was successful, extract additional details
+            if result_code == 0:  # Successful transaction
+                callback_metadata = stkCallback.get("CallbackMetadata", {}).get(
+                    "Item", []
+                )
+
+                # Process callback metadata
+                for item in callback_metadata:
+                    name = item.get("Name")
+                    value = item.get("Value")
+
+                    if name == "Amount":
+                        transaction_details["amount"] = value
+                    elif name == "MpesaReceiptNumber":
+                        transaction_details["mpesa_receipt_number"] = value
+                    elif name == "TransactionDate":
+                        transaction_details["transaction_date"] = value
+                    elif name == "PhoneNumber":
+                        transaction_details["phone_number"] = value
+
+            logger.info(
+                f"Processed callback for CheckoutRequestID: {checkout_request_id}"
+            )
+            return transaction_details
+
+        except Exception as e:
+            logger.error(f"Error processing callback data: {e}")
+            raise ValueError(f"Invalid callback data structure: {e}")
+
+
+# Flask Routes
+@app.route("/test", methods=["GET"])
+def test():
+    return jsonify({"message": "Hello, World!"})
+
+
+@app.route("/mpesa/callback", methods=["POST"])
+def mpesa_callback():
+    """
+    Flask endpoint to handle M-Pesa callbacks.
+    """
+    try:
+        callback_data = request.get_json()
+        logger.info(f"Received callback: {json.dumps(callback_data, indent=2)}")
+
+        # Process the callback
+        transaction_details = MPesaCallback.process_callback(callback_data)
+
+        # Store transaction details in the database
+        store_transaction_details(transaction_details)
+
+        return jsonify(
+            {"ResultCode": 0, "ResultDesc": "Callback processed successfully"}
+        ), 200
+
+    except Exception as e:
+        logger.error(f"Callback processing failed: {e}")
+        return jsonify(
+            {"ResultCode": 1, "ResultDesc": f"Callback processing failed: {str(e)}"}
+        ), 500
+
+
+# Helper Functions
+def store_transaction_details(transaction_details: Dict[str, Any]) -> None:
+    """
+    Store transaction details in the database.
+
+    Args:
+        transaction_details (Dict[str, Any]): Processed transaction details
+    """
+    try:
+        # Validate required fields
+        if (
+            not transaction_details.get("checkout_request_id")
+            or not transaction_details.get("result_code")
+            or not transaction_details.get("result_desc")
+        ):
+            raise ValueError("Missing required transaction details")
+
+        # Create a new Transaction object
+        transaction = Transaction(
+            checkout_request_id=transaction_details["checkout_request_id"],
+            result_code=transaction_details["result_code"],
+            result_desc=transaction_details["result_desc"],
+            amount=transaction_details.get("amount"),
+            mpesa_receipt_number=transaction_details.get("mpesa_receipt_number"),
+            transaction_date=transaction_details.get("transaction_date"),
+            phone_number=transaction_details.get("phone_number"),
+        )
+
+        # Add and commit the transaction to the database
+        db.session.add(transaction)
+        db.session.commit()
+        logger.info(
+            f"Transaction {transaction_details['checkout_request_id']} stored successfully"
+        )
+
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Failed to store transaction details: {e}")
+        raise e
+    
+
+
+
+@app.route('/accounts', methods=['POST'])
+def create_account():
+    data = request.json
+    user_id = data.get('user_id')
+    account_type = data.get('account_type')
+
+    if not user_id or not account_type:
+        return jsonify({"error": "user_id and account_type are required"}), 400
+
+    account = Account(user_id=user_id, account_type=account_type)
+    db.session.add(account)
+    db.session.commit()
+
+    return jsonify({"message": "Account created successfully", "account_id": account.id}), 201
+
+@app.route('/accounts/<int:account_id>', methods=['GET'])
+def get_account(account_id):
+    account = Account.query.get(account_id)
+    if not account:
+        return jsonify({"error": "Account not found"}), 404
+
+    return jsonify({
+        "account_id": account.id,
+        "user_id": account.user_id,
+        "balance": account.balance,
+        "account_type": account.account_type
+    })
+
+@app.route('/transactionsUser', methods=['POST'])
+def create_transactionUser():
+    data = request.json
+    account_id = data.get('account_id')
+    description = data.get('description')
+    amount = data.get('amount')
+    price = data.get('price')
+
+    if not account_id or not description or not amount or not price:
+        return jsonify({"error": "account_id, description, amount, and price are required"}), 400
+
+    # Check if account exists
+    account = Account.query.get(account_id)
+    if not account:
+        return jsonify({"error": "Account not found"}), 404
+
+    # Create transaction
+    transaction = TransactionUser(
+        account_id=account_id,
+        description=description,
+        amount=amount,
+        price=price
+    )
+    db.session.add(transaction)
+    db.session.commit()
+
+    return jsonify({"message": "Transaction created successfully", "transaction_id": transaction.id}), 201
+
+@app.route('/transactions/<int:account_id>', methods=['GET'])
+def get_transactions(account_id):
+    transactions = TransactionUser.query.filter_by(account_id=account_id).all()
+    if not transactions:
+        return jsonify({"error": "No transactions found for this account"}), 404
+
+    return jsonify([{
+        "id": t.id,
+        "description": t.description,
+        "amount": t.amount,
+        "price": t.price,
+        "timestamp": t.timestamp
+    } for t in transactions])
+
+
+# Run the application
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
+
