@@ -1,70 +1,50 @@
-
-async function currentUser(token){
-	await fetch('http://127.0.0.1:5555/current_user',{
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-		}})
-	.then((res)=> {
-		if(res.ok){
-			return res
-		}else{
-			console.log(res)
-		}
-	})
-//	.then (data => console.log(data))
-
-
-
-}
-/*
-// Function to log in the user
-async function login(username, password) {
-    const loginEndpoint = "http://127.0.0.1:5555/login"; // Replace with your backend's login endpoint
-    
+// Function to handle user login
+async function loginUser(credentials) {
+    const API_URL = "http:127.0.0.1:5555/login"; 
     try {
-        // Send a POST request to the login API
-        const response = await fetch(loginEndpoint, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                username: username,
-                password: password
-            })
-        });
-
-        // Check if the login was successful
-        if (response.ok) {
-            const data = await response.json();
-            
-            // Extract the access token from the response
-            const accessToken = data.access_token;
-		currentUser(accessToken)
-            
-            
-            
-            console.log("Login successful:", data);
-            
-        } else {
-            // Handle errors (e.g., invalid credentials)
-            const errorData = await response.json();
-            console.error("Login failed:", errorData);
-            
-        }
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      });
+  
+      // Check if the response is okay
+      if (!response.ok) {
+        throw new Error(`Login failed: ${response.status} - ${response.statusText}`);
+      }
+  
+      // Parse the JSON response
+      const data = await response.json();
+  
+      // Assuming the API returns a JWT token under the key "token"
+      if (data.token) {
+        // Save the token in localStorage
+        localStorage.setItem("jwtToken", data.token);
+        console.log("Login successful. Token stored in localStorage.");
+      } else {
+        console.error("Token not found in response.");
+      }
+  
+      return data; // Return the API response
     } catch (error) {
-        // Handle network or other unexpected errors
-        console.error("Error during login:", error);
-        
+      console.error("Error during login:", error);
+      throw error; // Re-throw the error for further handling
     }
-}
-
-// Example usage:
-const username = "AhandsomeNigga"; // Replace with the user's username
-const password = "12345678"; // Replace with the user's password
-login(username, password);
-*/
-
-currentUser('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczNzEwNDY3NywianRpIjoiMjBhNWViZjktOTBiYi00Y2Q2LWE2YTgtNjJiZmNhOWQzNmRmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzM3MTA0Njc3LCJjc3JmIjoiOTMyNDUxMmYtY2Q3Ny00ODkxLWE1ZWEtMjA1NzRjM2ZlZmNjIiwiZXhwIjoxNzM3MTA1NTc3fQ.3rb9QhfIW8lWQk8cYFSYMNVl4mm4IP0ZuB3OzJAP52Q')
+  }
+  
+  // Example usage
+  const credentials = {
+    username: "your_username", // Replace with user input
+    password: "your_password", // Replace with user input
+  };
+  
+  loginUser(credentials)
+    .then((data) => {
+      console.log("Logged in successfully:", data);
+    })
+    .catch((error) => {
+      console.error("Login failed:", error.message);
+    });
+  
