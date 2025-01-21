@@ -11,10 +11,16 @@
 }
 #signup-left-aside{
     background-image: url('https://cbx-prod.b-cdn.net/COLOURBOX58581056.jpg?width=800&height=800&quality=70');
+    background-position: center;
+    background-size: cover;
 }
 #signup-right-aside{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 10px;
+}
+a{
+    text-decoration: none;
 }
