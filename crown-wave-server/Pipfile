@@ -13,8 +13,9 @@ flask-cors = "*"
 flask-jwt-extended = "*"
 python-dotenv = "*"
 cloudinary = "*"
+requests = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.12"
+python_version = "3.8.13"
