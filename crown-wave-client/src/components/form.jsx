@@ -11,11 +11,17 @@ function Form(
 ){
     return(
         <>
-            <form action="" className={`input-wrapper ${className}`}>
-
-
+            <form action={action} className={` ${className}`}>
             </form>
         </>
     )
 }
+
+
+Form.propTypes = {
+ 
+  type: PropTypes.string,
+  action: PropTypes.string,
+  className: PropTypes.string,
+};
 export default Form

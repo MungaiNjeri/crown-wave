@@ -8,7 +8,11 @@ import './App.css'
 import Deposit from './pages/deposit'
 import Withdraw from './pages/withdraw'
 import Transfer from './pages/transfer'
+
 import UserProfile from './pages/userprofile'
+
+import Product from './pages/product'
+import ImageUploader from './pages/upload'
 
 
 function App() {
@@ -26,8 +30,11 @@ function App() {
         <Route path='/deposit' element = {<Deposit />}></Route>
         <Route path='/withdraw' element = {<Withdraw />}></Route>
         <Route path='/transfer' element = {<Transfer />}></Route>
+
         <Route path='/userprofile' element = {<UserProfile />}></Route>
-        
+        <Route path ='/product' element={<Product />}></Route>
+        <Route path ='/upload' element={<ImageUploader />}></Route>
+
 
 
       </Routes>
