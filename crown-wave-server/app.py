@@ -63,12 +63,17 @@ def login():
         return jsonify({"msg": "Invalid username or password"}), 401
     
 
-# Route to get the current user
-@app.route("/current_user", methods=["GET"])
+@app.route('/current_user', methods=['GET'])
 @jwt_required()
 def get_current_user():
-    token = request.headers.get("Authorization")
-    app.logger.info(f"Received Token: {token}")
+    current_user_id = get_jwt_identity()
+    user = User.query.filter_by(id=current_user_id).first()
+    if user:
+        current_user = user.to_dict()
+        return make_response(jsonify(current_user["username"]), 200)
+    else:
+        return make_response(jsonify({"error": "User not found"}), 404)
+
 
 @app.route("/logout")
 def logout():
