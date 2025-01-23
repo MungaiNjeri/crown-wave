@@ -59,6 +59,42 @@ function Dashboard(){
                         </div>
 
                     </div>
+                    <div id="dashboard-transaction">
+                        <table className="transaction-Table">
+                                <tr className="transaction-Row">
+                                    <th>No.</th>
+                                    <th>description</th>
+                                    <th>20,000</th>
+                                    <th>12th Jan</th>
+                                    
+                                </tr>
+                                <tr className="transaction-Row">
+                                    <td>1</td>
+                                    <td>withdraw</td>
+                                    <td>32,323</td>
+                                    <td>6th Jan</td>
+                                </tr>
+                                <tr className="transaction-Row">
+                                    <td>2</td>
+                                    <td>deposit</td>
+                                    <td>123,423</td>
+                                    <td>6th Jan</td>
+                                </tr>
+                                <tr className="transaction-Row">
+                                    <td>3</td>
+                                    <td>transfer</td>
+                                    <td>45,677</td>
+                                    <td>2nd Jan</td>
+                                </tr>
+                                <tr className="transaction-Row">
+                                    <td>4</td>
+                                    <td>deposit</td>
+                                    <td>234,8934</td>
+                                    <td>1st Jan</td>
+                                </tr>
+                        </table>
+
+                    </div>
 
                 </div>
 
