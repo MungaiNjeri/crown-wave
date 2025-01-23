@@ -19,9 +19,9 @@ async function loginUser(credentials) {
       const data = await response.json();
   
       // Assuming the API returns a JWT token under the key "token"
-      if (data.token) {
+      if (data.access_token) {
         // Save the token in localStorage
-        localStorage.setItem("jwtToken", data.token);
+        localStorage.setItem("jwtToken", data.access_token);
         console.log("Login successful. Token stored in localStorage.");
       } else {
         console.error("Token not found in response.");
@@ -36,8 +36,8 @@ async function loginUser(credentials) {
   
   // Example usage
   const credentials = {
-    username: "your_username", // Replace with user input
-    password: "your_password", // Replace with user input
+    username: "ninja", // Replace with user input
+    password: "1234567", // Replace with user input
   };
   
   loginUser(credentials)
