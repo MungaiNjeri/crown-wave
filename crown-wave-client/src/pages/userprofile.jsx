@@ -1,35 +1,54 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { parsePath } from "react-router-dom";
-
+import { token } from "../data/api";
+import { API_BASE_URL } from "../data/api";
 const UserProfile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   
 
   // Fetch the CEO profile from the API
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        
-        const response = await fetch("http://127.0.0.1:5555/current_user", {
-            method:'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
-          },
-        });
-        setProfile(response.data);
-      } catch (err) {
-        setError("Failed to fetch user profile. Please try again later.");
-        console.error("Error fetching profile:", err);
-      } finally {
-        setLoading(false);
+
+    const API_URL = "http://127.0.0.1:5555/current_user"; // Update to the correct backend endpoint if needed
+
+    try {
+      // Retrieve the JWT token from localStorage
+      const token = localStorage.getItem("jwtToken");
+      if (!token) {
+        throw new Error("No token found. User is not logged in.");
       }
-    };
   
-    fetchProfile();
+      // Make the GET request to the backend
+      const response = fetch(API_URL, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Send the token in the Authorization header
+        },
+      });
+  
+      // Check if the response status is OK
+      if (!response.ok) {
+        const errorDetails =  response.json();
+        throw new Error(`Failed to fetch current user: ${response.status} - ${response.statusText} | ${errorDetails.error}`);
+
+      }
+  
+      // Parse and return the JSON response
+      const userData =  response.json();
+      console.log("Current User Data:", userData);
+      return userData;
+    } catch (error) {
+      console.error("Error fetching current user:", error.message);
+      throw error; // Rethrow the error for further handling
+    }
+    
+  
+   ;
   }, []);
   
   
