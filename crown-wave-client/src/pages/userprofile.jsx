@@ -6,17 +6,18 @@ const UserProfile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const username = "";
   
 
   // Fetch the CEO profile from the API
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:5555/current_user", {
+        
+        const response = await fetch("http://127.0.0.1:5555/current_user", {
+            method:'GET',
           headers: {
-            'username': 'your-username',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
           },
         });
         setProfile(response.data);
@@ -34,6 +35,8 @@ const UserProfile = () => {
   
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
+    if (!profile) return <div>No user profile found.</div>;
+
   return (
     <div style={styles.container}>
       <div style={styles.card}>
@@ -42,7 +45,7 @@ const UserProfile = () => {
           alt="Profile"
           style={styles.image}
         />
-        <h1 style={styles.name}>{profile.name || "CEO "}</h1>
+        <h1 style={styles.name}>{username.name || "CEO "}</h1>
         <p style={styles.status}>{profile.title || "Active"}</p>
         <p style={styles.bio}>{profile.bio || "queen diva"}</p>
         <p style={styles.package}>
