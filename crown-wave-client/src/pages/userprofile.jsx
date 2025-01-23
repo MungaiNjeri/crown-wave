@@ -8,11 +8,11 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-console.log(token)
   
 
   // Fetch the CEO profile from the API
   useEffect(() => {
+
     const API_URL = "http://127.0.0.1:5555/current_user"; // Update to the correct backend endpoint if needed
 
     try {
@@ -35,6 +35,7 @@ console.log(token)
       if (!response.ok) {
         const errorDetails =  response.json();
         throw new Error(`Failed to fetch current user: ${response.status} - ${response.statusText} | ${errorDetails.error}`);
+
       }
   
       // Parse and return the JSON response
@@ -53,6 +54,8 @@ console.log(token)
   
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
+    if (!profile) return <div>No user profile found.</div>;
+
   return (
     <div style={styles.container}>
       <div style={styles.card}>
@@ -61,7 +64,7 @@ console.log(token)
           alt="Profile"
           style={styles.image}
         />
-        <h1 style={styles.name}>{profile.name || "CEO "}</h1>
+        <h1 style={styles.name}>{username.name || "CEO "}</h1>
         <p style={styles.status}>{profile.title || "Active"}</p>
         <p style={styles.bio}>{profile.bio || "queen diva"}</p>
         <p style={styles.package}>
