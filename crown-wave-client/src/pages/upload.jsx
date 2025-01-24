@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Button from "../components/button";
-
+import './pages-styles/upload.css'
 
 const ImageUploader = ({ onImageUpload }) => {
   const [image, setImage] = useState(null);
@@ -31,31 +31,28 @@ const ImageUploader = ({ onImageUpload }) => {
   };
 
   return (
-    <div style={{ textAlign: "center", margin: "20px" }}>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          
-        />
-        {preview && (
-          <div style={{ marginBottom: "10px" }}>
-            <img
-              src={preview}
-              alt="Preview"
-              
-            />
-          </div>
-        )}
-        <Button 
+    <>
+      <div id="upload">
+        <h1>Upload files</h1>
+        <h3>add your screenshot here.</h3>
+         <div id="upload-preview">
+
+         </div>
+         <div><h2>file name:</h2>
+              <p>screenshot.jpeg</p> 
+         </div>
+         <Button 
           type="submit"
-          placeholder="Upload"
-          //onClick: PropTypes.func.isRequired,
-          className = 'button'
-          />
-      </form>
-    </div>
+          placeholder="upload"
+          
+         />
+         
+      </div>
+
+
+    
+    </>
+  
   );
 };
 
