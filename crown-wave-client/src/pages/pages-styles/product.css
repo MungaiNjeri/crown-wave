@@ -1,17 +1,23 @@
-.Product-downloader{
-    display: fle;
-    justify-content: center;
-    align-items: center;
-    width: 900px;
-    height: 800px;
-    padding: 10px;
-    border-radius: 10px;
-}
-.Product-downloader>img{
-    width:800px;
+#product-wrapper{
+    width: 1000px;
     height: 700px;
-    object-fit: cover;
-    object-position: center;
+    display: grid;
+    padding: 20px;
     border-radius: 10px;
-
+    grid-template-columns: 1fr 2fr;
+     background-color:  #d5e2ffd3 ;
+}
+#product-details{
+    padding: 10px;
+}
+#product-image-wrapper{
+    padding: 10px;
+}
+#product-image{
+    width: 600px;
+    height: 600px;
+    background-image: url("https://images.pexels.com/photos/1957477/pexels-photo-1957477.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1");
+    background-position: center;
+    background-size: cover;
+    border-radius:10px ;
 }
