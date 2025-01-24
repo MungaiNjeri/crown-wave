@@ -15,20 +15,25 @@ const Product = ({ imageUrl, imageName }) => {
   };
 
   return (
-    <div className="Product-downloader">
-      <img
-        src={'https://images.pexels.com/photos/7676408/pexels-photo-7676408.jpeg?auto=compress&cs=tinysrgb&w=600'}
-        alt="Preview"
-      />
-      <br />
-        <Button 
-          type="submit"
-          placeholder="Download"
-          //onClick: PropTypes.func.isRequired,
-          className = 'button'
-          />
+    <div id="product-wrapper">
+          <div id="product-details">
+              <h1>Poang</h1>
+              <h3>Rocking chair</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis sapiente aliquid quibusdam. Provident veniam deleniti, facere asperiores qui sapiente ea.</p>
+              <Button 
+                        type="submit"
+                        placeholder="download" />
+            </div>
+            <div id="product-image-wrapper">
+              <h1><i class="bi bi-currency-exchange"></i>299</h1>
+              <div id="product-image">
+
+              </div>
+
+            </div>
 
     </div>
+ 
   );
 };
 
