@@ -10,7 +10,7 @@ import Transfer from "./pages/transfer";
 import UserProfile from "./pages/userprofile";
 import Product from "./pages/product";
 import ImageUploader from "./pages/upload";
-
+import servicepackage from "./pages/servicepackage"
 import "./App.css";
 
 function App() {
@@ -29,6 +29,7 @@ function App() {
         <Route path="/userprofile" element={<UserProfile />} />
         <Route path="/product" element={<Product />} />
         <Route path="/upload" element={<ImageUploader />} />
+        <Route path="/servicepackage" element={<servicepackage />} />
       </Routes>
     </Router>
   );
