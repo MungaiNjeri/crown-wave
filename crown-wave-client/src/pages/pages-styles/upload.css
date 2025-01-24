@@ -1,0 +1,14 @@
+#upload{
+    background-color: #111725;
+    padding: 20px;
+    border-radius:10px ;
+    width: 600px;
+    color:#D5E2FF ;
+}
+#upload-preview{
+    height: 400px;
+    background-image: url("https://images.pexels.com/photos/46924/pexels-photo-46924.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1");
+    background-size: cover;
+    background-position: center;
+    border-radius:10px
+}
