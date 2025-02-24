@@ -14,10 +14,7 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///crown-wave.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-
 db = SQLAlchemy(metadata=metadata)
-
 db.init_app(app)
 migrate = Migrate(app, db)
 # Configure CORS
